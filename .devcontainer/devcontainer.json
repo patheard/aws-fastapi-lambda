@@ -1,6 +1,16 @@
 {
-	"name": "Python",
-	"image": "mcr.microsoft.com/vscode/devcontainers/python:3.8",
+	"name": "Python + Terraform",
+	"build": {
+		"dockerfile": "Dockerfile",
+		"context": "..",
+		"args": {
+			"PYTHON_VERSION": "3.8",
+			"TERRAFORM_VERSION": "1.0.2",
+			"TERRAFORM_CHECKSUM": "7329f887cc5a5bda4bedaec59c439a4af7ea0465f83e3c1b0f4d04951e1181f4",
+			"TERRAGRUNT_VERSION": "0.31.0",
+			"TERRAGRUNT_CHECKSUM": "b2d32b6c5a7d5fb22ad3f07267b4b90ff82ebcc5f92111550fd43f4ce94716a0"
+		}
+	},
 	"containerEnv": {
 		"SHELL": "/bin/zsh"
 	},
@@ -22,6 +32,7 @@
 	},
 	"extensions": [
 		"github.copilot",
+		"hashicorp.terraform",
 		"ms-python.python",
 		"redhat.vscode-yaml",
 	],
