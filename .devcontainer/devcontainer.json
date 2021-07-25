@@ -1,14 +1,9 @@
-// For format details, see https://aka.ms/devcontainer.json. For config options, see the README at:
-// https://github.com/microsoft/vscode-dev-containers/tree/v0.166.1/containers/python-3
 {
-	"name": "Python 3",
+	"name": "Python",
 	"image": "mcr.microsoft.com/vscode/devcontainers/python:3.8",
-
 	"containerEnv": {
 		"SHELL": "/bin/zsh"
 	},
-
-	// Set *default* container specific settings.json values on container create.
 	"settings": {
 		"python.pythonPath": "/usr/local/bin/python",
 		"python.linting.enabled": true,
@@ -25,13 +20,11 @@
 		"python.linting.pylintPath": "/usr/local/py-utils/bin/pylint",
 		"editor.formatOnSave": true,
 	},
-
-	// Add the IDs of extensions you want installed when the container is created.
 	"extensions": [
+		"github.copilot",
 		"ms-python.python",
-		"grapecity.gc-excelviewer"
+		"redhat.vscode-yaml",
 	],
-
-	// Comment out connect as root instead. More info: https://aka.ms/vscode-remote/containers/non-root.
+	"postCreateCommand": "cd api && make install && make install-dev",
 	"remoteUser": "vscode"
 }

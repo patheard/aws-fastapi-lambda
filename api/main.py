@@ -1,3 +1,7 @@
+"""
+Main API handler that defines all routes.
+"""
+
 from fastapi import FastAPI
 from mangum import Mangum
 
@@ -8,7 +12,8 @@ app = FastAPI(
 
 
 @app.get("/")
-def read_root():
+def root():
+    "Root path request"
     return {"Hello": "World"}
 
 
