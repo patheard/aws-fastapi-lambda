@@ -21,8 +21,9 @@ cd api
 make zip
 
 # Create the API gateway and Lambda function
-cd ../infra/env/dev/api-gateway
-terragrunt apply
+cd ../infra/env/dev
+terragrunt run-all plan   # to see all the goodness that will get created
+terragrunt run-all apply  # create all the goodness
 ```
 
 # Note
