@@ -17,8 +17,6 @@ cd api
 make zip
 
 # Create the API gateway and Lambda function
-export AWS_ACCESS_KEY_ID="some-access-key"
-export AWS_SECRET_ACCESS_KEY="and-its-secret"
 cd ../infra/env/dev/api-gateway
 terragrunt apply
 ```
