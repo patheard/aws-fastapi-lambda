@@ -6,3 +6,6 @@ __pycache__
 .terraform*
 .terragrunt*
 *.tfstate
+
+# API
+infra/modules/api-gateway/lambda.zip
