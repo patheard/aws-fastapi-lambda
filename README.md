@@ -1,5 +1,9 @@
 # AWS FastAPI Lambda
-Create an API using AWS API Gateway, Lambda and FastAPI + Mangum (based on [this walkthrough](https://towardsdatascience.com/fastapi-aws-robust-api-part-1-f67ae47390f9)).
+Create an API using AWS API Gateway, Lambda and FastAPI + Mangum (based on [this walkthrough](https://towardsdatascience.com/fastapi-aws-robust-api-part-1-f67ae47390f9)):
+
+* Lambda is deployed in a VPC, so has access to private resources.
+* Currently no Internet Gateway setup, so Lambda has no internet access.
+* VPC endpoints have been created for CloudWatch logging/monitoring.
 
 # Dev
 ```sh
