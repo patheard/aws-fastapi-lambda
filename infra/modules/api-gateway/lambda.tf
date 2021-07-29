@@ -7,6 +7,11 @@ resource "aws_lambda_function" "api_lambda" {
 
   source_code_hash = filebase64sha256("lambda.zip")
 
+  vpc_config {
+    subnet_ids          = [var.lambda_subnet_id]
+    security_group_ids  = [var.lambda_security_group_id]
+  }
+
   tags = {
     Name    = "${var.project_name}-lambda"
     Project = var.project_name
@@ -17,6 +22,11 @@ resource "aws_lambda_function" "api_lambda" {
 resource "aws_iam_role" "api_lambda_role" {
   name               = "ApiLambdaRole"
   assume_role_policy = data.aws_iam_policy_document.lambda_assume_policy.json
+}
+
+resource "aws_iam_role_policy_attachment" "lambda_basic_execution" {
+  role       = aws_iam_role.api_lambda_role.name
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole"
 }
 
 data "aws_iam_policy_document" "lambda_assume_policy" {
@@ -32,6 +42,7 @@ data "aws_iam_policy_document" "lambda_assume_policy" {
   }
 }
 
+# Allow the API gateway to invoke this lambda function
 resource "aws_lambda_permission" "api_lambda_permission" {
   statement_id  = "AllowExecutionFromAPIGateway"
   action        = "lambda:InvokeFunction"
