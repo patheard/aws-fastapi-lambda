@@ -11,9 +11,9 @@ app = FastAPI(
 )
 
 
-@app.get("/")
-def root():
-    "Root path request"
+@app.get("/hello")
+def hello():
+    "Hello path request"
     return {"Hello": "World"}
 
 

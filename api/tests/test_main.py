@@ -1,5 +1,5 @@
 import main
 
 
-def test_main():
-    assert main.root() == {"Hello": "World"}
+def test_hello():
+    assert main.hello() == {"Hello": "World"}
