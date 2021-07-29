@@ -5,6 +5,12 @@ resource "aws_api_gateway_rest_api" "api_gateway" {
   endpoint_configuration {
     types = ["REGIONAL"]
   }
+
+  tags = {
+    Name    = "${var.project_name}-api-gateway"
+    Project = var.project_name
+    Billing = "Operations"
+  }
 }
 
 resource "aws_api_gateway_deployment" "api_deployment" {

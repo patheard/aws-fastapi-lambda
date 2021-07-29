@@ -1,11 +1,3 @@
-resource "aws_lambda_permission" "api_lambda_permission" {
-  statement_id  = "AllowExecutionFromAPIGateway"
-  action        = "lambda:InvokeFunction"
-  function_name = aws_lambda_function.api_lambda.function_name
-  principal     = "apigateway.amazonaws.com"
-  source_arn    = "${aws_api_gateway_rest_api.api_gateway.execution_arn}/*/*/*"
-}
-
 resource "aws_lambda_function" "api_lambda" {
   filename      = "lambda.zip"
   function_name = "FastAPI"
@@ -14,6 +6,12 @@ resource "aws_lambda_function" "api_lambda" {
   runtime       = "python3.8"
 
   source_code_hash = filebase64sha256("lambda.zip")
+
+  tags = {
+    Name    = "${var.project_name}-lambda"
+    Project = var.project_name
+    Billing = "Operations"
+  }
 }
 
 resource "aws_iam_role" "api_lambda_role" {
@@ -32,4 +30,12 @@ data "aws_iam_policy_document" "lambda_assume_policy" {
       identifiers = ["lambda.amazonaws.com"]
     }
   }
+}
+
+resource "aws_lambda_permission" "api_lambda_permission" {
+  statement_id  = "AllowExecutionFromAPIGateway"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.api_lambda.function_name
+  principal     = "apigateway.amazonaws.com"
+  source_arn    = "${aws_api_gateway_rest_api.api_gateway.execution_arn}/*/*/*"
 }

@@ -1,6 +1,12 @@
 resource "aws_cloudwatch_log_group" "lambda_log_group" {
   name              = "/aws/lambda/${aws_lambda_function.api_lambda.function_name}"
   retention_in_days = 14
+
+  tags = {
+    Name    = "${var.project_name}-log-group"
+    Project = var.project_name
+    Billing = "Operations"
+  }
 }
 
 resource "aws_iam_policy" "lambda_logging" {
