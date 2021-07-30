@@ -14,6 +14,10 @@ resource "aws_lambda_function" "api_lambda" {
     security_group_ids = [var.lambda_security_group_id]
   }
 
+  tracing_config {
+    mode = "PassThrough"
+  }
+
   tags = {
     Name    = "${var.project_name}-function"
     Project = var.project_name

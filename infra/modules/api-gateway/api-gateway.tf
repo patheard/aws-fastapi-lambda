@@ -28,10 +28,17 @@ resource "aws_api_gateway_deployment" "api_deployment" {
 resource "aws_api_gateway_stage" "api_stage" {
   deployment_id = aws_api_gateway_deployment.api_deployment.id
   rest_api_id   = aws_api_gateway_rest_api.api_gateway.id
-  stage_name    = "v1"
+  stage_name    = "dev"
 
   cache_cluster_enabled = true
   cache_cluster_size    = "0.5"
+
+  xray_tracing_enabled = true
+
+  access_log_settings {
+    destination_arn = aws_cloudwatch_log_group.api_gateway_log_group.arn
+    format          = "{\"requestId\":\"$context.requestId\", \"ip\": \"$context.identity.sourceIp\", \"caller\":\"$context.identity.caller\", \"requestTime\":\"$context.requestTime\", \"httpMethod\":\"$context.httpMethod\", \"resourcePath\":\"$context.resourcePath\", \"status\":\"$context.status\", \"responseLength\":\"$context.responseLength\"}"
+  }
 }
 
 resource "aws_api_gateway_resource" "api_gateway_resource" {
@@ -51,14 +58,17 @@ resource "aws_api_gateway_method" "api_gateway_proxy_method" {
   }
 }
 
-resource "aws_api_gateway_method_settings" "api_gateway_method_caching" {
+resource "aws_api_gateway_method_settings" "api_gateway_method_settings" {
   rest_api_id = aws_api_gateway_rest_api.api_gateway.id
   stage_name  = aws_api_gateway_stage.api_stage.stage_name
   method_path = "*/*"
 
   settings {
     caching_enabled      = true
-    cache_ttl_in_seconds = "3600"
+    cache_ttl_in_seconds = "3600" # 1 hour
+
+    metrics_enabled = true
+    logging_level   = "ERROR"
   }
 }
 
