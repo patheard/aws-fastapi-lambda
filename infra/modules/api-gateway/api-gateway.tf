@@ -29,6 +29,9 @@ resource "aws_api_gateway_stage" "api_stage" {
   deployment_id = aws_api_gateway_deployment.api_deployment.id
   rest_api_id   = aws_api_gateway_rest_api.api_gateway.id
   stage_name    = "v1"
+
+  cache_cluster_enabled = true
+  cache_cluster_size    = "0.5"
 }
 
 resource "aws_api_gateway_resource" "api_gateway_resource" {
@@ -45,6 +48,17 @@ resource "aws_api_gateway_method" "api_gateway_proxy_method" {
 
   request_parameters = {
     "method.request.path.proxy" = true
+  }
+}
+
+resource "aws_api_gateway_method_settings" "api_gateway_method_caching" {
+  rest_api_id = aws_api_gateway_rest_api.api_gateway.id
+  stage_name  = aws_api_gateway_stage.api_stage.stage_name
+  method_path = "*/*"
+
+  settings {
+    caching_enabled      = true
+    cache_ttl_in_seconds = "3600"
   }
 }
 
