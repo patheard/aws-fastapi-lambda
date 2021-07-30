@@ -6,6 +6,7 @@ locals {
 inputs = {
   env           = local.vars.inputs.env
   project_name  = local.vars.inputs.project_name
+  project_team  = local.vars.inputs.project_team
   region        = local.region
 }
 

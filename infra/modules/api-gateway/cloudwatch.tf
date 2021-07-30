@@ -6,7 +6,7 @@ resource "aws_cloudwatch_log_group" "lambda_log_group" {
   tags = {
     Name    = "${var.project_name}-log-group"
     Project = var.project_name
-    Billing = "Operations"
+    Billing = var.project_team
   }
 }
 

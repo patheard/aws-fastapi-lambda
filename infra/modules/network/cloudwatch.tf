@@ -12,7 +12,7 @@ resource "aws_cloudwatch_log_group" "vpc_flow_logs_group" {
 
   tags = {
     Project = var.project_name
-    Billing = "Operations"
+    Billing = var.project_team
   }
 }
 

@@ -16,7 +16,7 @@ resource "aws_vpc" "api_vpc" {
   tags = {
     Name    = "${var.project_name}-vpc"
     Project = var.project_name
-    Billing = "Operations"
+    Billing = var.project_team
   }
 }
 
@@ -30,7 +30,7 @@ resource "aws_subnet" "api_subnet" {
   tags = {
     Name    = "${var.project_name}-subnet-${count.index + 1}"
     Project = var.project_name
-    Billing = "Operations"
+    Billing = var.project_team
   }
 }
 

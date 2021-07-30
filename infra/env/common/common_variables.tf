@@ -8,6 +8,11 @@ variable "project_name" {
   type        = string
 }
 
+variable "project_team" {
+  description = "(Required) Name of the project team, used for tagging"
+  type        = string
+}
+
 variable "region" {
   description = "(Required) The region to build infra in"
   type        = string

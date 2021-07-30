@@ -17,7 +17,7 @@ resource "aws_lambda_function" "api_lambda" {
   tags = {
     Name    = "${var.project_name}-function"
     Project = var.project_name
-    Billing = "Operations"
+    Billing = var.project_team
   }
 }
 

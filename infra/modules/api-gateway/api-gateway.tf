@@ -9,7 +9,7 @@ resource "aws_api_gateway_rest_api" "api_gateway" {
   tags = {
     Name    = "${var.project_name}-api-gateway"
     Project = var.project_name
-    Billing = "Operations"
+    Billing = var.project_team
   }
 }
 
