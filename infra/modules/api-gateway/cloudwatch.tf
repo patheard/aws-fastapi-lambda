@@ -1,4 +1,5 @@
 resource "aws_cloudwatch_log_group" "lambda_log_group" {
+  # checkov:skip=CKV_AWS_158:Default service key encryption is acceptable
   name              = "/aws/lambda/${aws_lambda_function.api_lambda.function_name}"
   retention_in_days = 14
 

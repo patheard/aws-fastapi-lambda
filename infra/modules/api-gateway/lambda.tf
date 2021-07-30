@@ -1,4 +1,6 @@
 resource "aws_lambda_function" "api_lambda" {
+  # checkov:skip=CKV_AWS_115:No function-level concurrent execution limit required
+  # checkov:skip=CKV_AWS_116:No Dead Letter Queue required
   filename      = "lambda.zip"
   function_name = "FastAPI"
   role          = aws_iam_role.api_lambda_role.arn

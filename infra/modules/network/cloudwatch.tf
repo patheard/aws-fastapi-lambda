@@ -6,6 +6,7 @@ resource "aws_flow_log" "api_flow_logs" {
 }
 
 resource "aws_cloudwatch_log_group" "vpc_flow_logs_group" {
+  # checkov:skip=CKV_AWS_158:Default service key encryption is acceptable
   name              = "/aws/vpc-flow-logs/${var.project_name}-vpc"
   retention_in_days = 14
 

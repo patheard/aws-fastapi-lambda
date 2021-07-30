@@ -7,6 +7,7 @@ data "aws_availability_zones" "available" {
 #
 
 resource "aws_vpc" "api_vpc" {
+  # checkov:skip=CKV2_AWS_1:False positive - NACL is attached to all subnets
   cidr_block                       = var.vpc_cidr_block
   enable_dns_support               = true
   enable_dns_hostnames             = true
@@ -39,13 +40,6 @@ resource "aws_subnet" "api_subnet" {
 
 resource "aws_default_security_group" "vpc_default" {
   vpc_id = aws_vpc.api_vpc.id
-
-  ingress {
-    from_port   = 443
-    to_port     = 443
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
 }
 
 resource "aws_security_group" "vpc_endpoints" {
@@ -55,6 +49,7 @@ resource "aws_security_group" "vpc_endpoints" {
 }
 
 resource "aws_security_group" "lambda_security_group" {
+  # checkov:skip=CKV2_AWS_5:False positive - SG is attached to Lambda in ./infra/modules/api-gateway/lambda.tf
   name        = "Lambda"
   description = "Allow TLS outbound traffic to CloudWatch from the Lambda"
   vpc_id      = aws_vpc.api_vpc.id
