@@ -1,9 +1,9 @@
-variable "lambda_subnet_id" {
-    description = "Lambda's subnet ID"
-    type        = string
+variable "lambda_subnet_ids" {
+  description = "Lambda's subnet IDs"
+  type        = list(string)
 }
 
 variable "lambda_security_group_id" {
-    description = "Lambda's security group ID"
-    type        = string
+  description = "Lambda's security group ID"
+  type        = string
 }

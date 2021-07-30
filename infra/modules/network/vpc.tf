@@ -20,12 +20,14 @@ resource "aws_vpc" "api_vpc" {
 }
 
 resource "aws_subnet" "api_subnet" {
+  count = 3
+
   vpc_id            = aws_vpc.api_vpc.id
-  cidr_block        = cidrsubnet(var.vpc_cidr_block, 4, 0)
-  availability_zone = data.aws_availability_zones.available.names[0]
+  cidr_block        = cidrsubnet(var.vpc_cidr_block, 4, count.index)
+  availability_zone = element(data.aws_availability_zones.available.names, count.index)
 
   tags = {
-    Name    = "${var.project_name}-subnet"
+    Name    = "${var.project_name}-subnet-${count.index + 1}"
     Project = var.project_name
     Billing = "Operations"
   }
@@ -36,12 +38,12 @@ resource "aws_subnet" "api_subnet" {
 #
 
 resource "aws_default_security_group" "vpc_default" {
-  vpc_id      = aws_vpc.api_vpc.id
+  vpc_id = aws_vpc.api_vpc.id
 
   ingress {
     from_port   = 443
     to_port     = 443
-    protocol    = "tcp" 
+    protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
 }
@@ -80,47 +82,28 @@ resource "aws_security_group_rule" "lambda_to_vpc_endpoints" {
 
 #
 # Network Access Control List (NACL)
-# Block SSH and RDP ports, open everything else
 #
 
 resource "aws_default_network_acl" "vpc_default" {
-  default_network_acl_id  = aws_vpc.api_vpc.default_network_acl_id
-  subnet_ids              = [aws_subnet.api_subnet.id]
+  default_network_acl_id = aws_vpc.api_vpc.default_network_acl_id
+  subnet_ids             = aws_subnet.api_subnet.*.id
 
   ingress {
-    protocol   = "tcp"
     rule_no    = 100
-    action     = "deny"
-    cidr_block = "0.0.0.0/0"
-    from_port  = 22
-    to_port    = 22
-  }
-
-  ingress {
     protocol   = "tcp"
-    rule_no    = 200
-    action     = "deny"
-    cidr_block = "0.0.0.0/0"
-    from_port  = 3389
-    to_port    = 3389
-  }
-
-  ingress {
-    protocol   = -1
-    rule_no    = 300
     action     = "allow"
     cidr_block = "0.0.0.0/0"
-    from_port  = 0
-    to_port    = 0
+    from_port  = 443
+    to_port    = 443
   }
 
   egress {
-    protocol   = -1
-    rule_no    = 100
+    rule_no    = 200
+    protocol   = "tcp"
     action     = "allow"
     cidr_block = "0.0.0.0/0"
-    from_port  = 0
-    to_port    = 0
+    from_port  = 443
+    to_port    = 443
   }
 }
 

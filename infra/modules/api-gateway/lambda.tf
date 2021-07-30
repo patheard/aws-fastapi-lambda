@@ -8,8 +8,8 @@ resource "aws_lambda_function" "api_lambda" {
   source_code_hash = filebase64sha256("lambda.zip")
 
   vpc_config {
-    subnet_ids          = [var.lambda_subnet_id]
-    security_group_ids  = [var.lambda_security_group_id]
+    subnet_ids         = var.lambda_subnet_ids
+    security_group_ids = [var.lambda_security_group_id]
   }
 
   tags = {
