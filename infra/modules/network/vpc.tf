@@ -3,7 +3,7 @@ data "aws_availability_zones" "available" {
 }
 
 #
-# VPC and Subnets
+# VPC and subnet
 #
 
 resource "aws_vpc" "api_vpc" {
