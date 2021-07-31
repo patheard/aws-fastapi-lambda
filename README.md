@@ -1,7 +1,7 @@
 # AWS FastAPI Lambda
 Creates an API using an AWS API Gateway and Lambda function, based on [this walkthrough](https://towardsdatascience.com/fastapi-aws-robust-api-part-1-f67ae47390f9).  The setup uses:
 
-* **API:** [FastAPI](https://fastapi.tiangolo.com/) `+` [Mangum](https://mangum.io/), served by [uvicorn](https://www.uvicorn.org/)
+* **API:** [FastAPI](https://fastapi.tiangolo.com/) `+` [Mangum](https://mangum.io/)
 * **Infrastructure:** [Terraform](https://www.terraform.io/) `+` [Terragrunt](https://terragrunt.gruntwork.io/)
 
 Requests are sent to the API Gateway, which has one `/{proxy+}` resource.  This resource handles all requests using a [proxy integration with the Lambda function](https://docs.aws.amazon.com/apigateway/latest/developerguide/set-up-lambda-proxy-integrations.html).  Mangum acts as a wrapper, which allows FastAPI to handle the requests and create responses the API gateway can serve.  All logs are sent to CloudWatch log groups.
