@@ -1,21 +1,25 @@
 # AWS FastAPI Lambda
-Create an API using AWS API Gateway, Lambda and FastAPI + Mangum (based on [this walkthrough](https://towardsdatascience.com/fastapi-aws-robust-api-part-1-f67ae47390f9)):
+Creates an API using an AWS API Gateway and Lambda function, based on [this walkthrough](https://towardsdatascience.com/fastapi-aws-robust-api-part-1-f67ae47390f9).  The setup uses:
+
+* **API:** [FastAPI](https://fastapi.tiangolo.com/) `+` [Mangum](https://mangum.io/), served by [uvicorn](https://www.uvicorn.org/)
+* **Infrastructure:** [Terraform](https://www.terraform.io/) `+` [Terragrunt](https://terragrunt.gruntwork.io/)
+
+Requests are sent to the API Gateway, which has one `/{proxy+}` resource.  This resource handles all requests using a [proxy integration with the Lambda function](https://docs.aws.amazon.com/apigateway/latest/developerguide/set-up-lambda-proxy-integrations.html).  Mangum acts as a wrapper, which allows FastAPI to handle the requests and create responses the API gateway can serve.  All logs are sent to CloudWatch log groups.
 
 ```js
-          ┌─── AWS region ────────────────────────────┐
-          │                  ┌─── VPC ──────────────┐ │
-          │                  │                      │ │
-Request  ───►  API Gateway  ───►  Lambda (FastAPI)  │ │
-          │                  │                      │ │
-          │         │        └──────────│───────────┘ │
-          │ ┌───────│───────────────────│───────────┐ │
-          │ │       ▼     CloudWatch    ▼           │ │
-          │ └───────────────────────────────────────┘ │                              
-          └───────────────────────────────────────────┘
+          ┌─── AWS region ─────────────────────────────┐
+          │                  ┌─── VPC: three AZs ────┐ │
+          │                  │                       │ │
+Request  ───►  API Gateway  ───►  Lambda (FastAPI)   │ │
+          │                  │                       │ │
+          │         │        └───────────│───────────┘ │
+          │ ┌───────│────────────────────│───────────┐ │
+          │ │       ▼      CloudWatch    ▼           │ │
+          │ └────────────────────────────────────────┘ │
+          └────────────────────────────────────────────┘
 ```
 
-* Lambda is deployed in a VPC, so the function has access to private resources.
-* No Internet Gateway, so Lambda uses VPC endpoints for access to CloudWatch.
+If performance becomes an issue, a CloudFront distribution could be added for API responses that are cacheable.
 
 # Dev
 ```sh
@@ -32,7 +36,7 @@ View the [API endpoints](http://localhost:8000/docs).
 cd api
 make zip
 
-# Create the API gateway and Lambda function
+# Create the AWS infrastructure
 cd ../infra/env/dev
 terragrunt run-all plan   # to see all the goodness that will get created
 terragrunt run-all apply  # create all the goodness
