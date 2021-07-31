@@ -1,0 +1,29 @@
+name: Terraform security
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "infra/**"
+      - ".github/workflows/terraform.yml"
+  pull_request:
+    paths:
+      - "infra/**"
+      - ".github/workflows/terraform.yml"
+
+jobs:
+  terraform-security:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Checkov security scan
+        id: checkov
+        uses: bridgecrewio/checkov-action@v12.641.0
+        with:
+          directory: infra
+          framework: terraform
+          output_format: cli
+          download_external_modules: true
