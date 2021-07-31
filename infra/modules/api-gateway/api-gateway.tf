@@ -14,7 +14,8 @@ resource "aws_api_gateway_rest_api" "api_gateway" {
 }
 
 resource "aws_api_gateway_deployment" "api_deployment" {
-  rest_api_id = aws_api_gateway_rest_api.api_gateway.id
+  rest_api_id       = aws_api_gateway_rest_api.api_gateway.id
+  stage_description = md5(file("api-gateway.tf")) # Force a new deployment when this file changes
 
   lifecycle {
     create_before_destroy = true
@@ -48,10 +49,11 @@ resource "aws_api_gateway_resource" "api_gateway_resource" {
 }
 
 resource "aws_api_gateway_method" "api_gateway_proxy_method" {
-  rest_api_id   = aws_api_gateway_rest_api.api_gateway.id
-  resource_id   = aws_api_gateway_resource.api_gateway_resource.id
-  http_method   = "ANY"
-  authorization = "NONE"
+  rest_api_id      = aws_api_gateway_rest_api.api_gateway.id
+  resource_id      = aws_api_gateway_resource.api_gateway_resource.id
+  http_method      = "ANY"
+  authorization    = "NONE"
+  api_key_required = true
 
   request_parameters = {
     "method.request.path.proxy" = true
@@ -79,4 +81,26 @@ resource "aws_api_gateway_integration" "api_proxy_integration" {
   integration_http_method = "POST"
   type                    = "AWS_PROXY"
   uri                     = aws_lambda_function.api_lambda.invoke_arn
+}
+
+#
+# API gateway usage plan and key
+#
+resource "aws_api_gateway_usage_plan" "api_gateway_usage_plan" {
+  name = "FastAPIUsagePlan"
+
+  api_stages {
+    api_id = aws_api_gateway_rest_api.api_gateway.id
+    stage  = aws_api_gateway_stage.api_stage.stage_name
+  }
+}
+
+resource "aws_api_gateway_api_key" "api_key" {
+  name = "FastAPI"
+}
+
+resource "aws_api_gateway_usage_plan_key" "api_gateway_usage_plan_key" {
+  key_id        = aws_api_gateway_api_key.api_key.id
+  key_type      = "API_KEY"
+  usage_plan_id = aws_api_gateway_usage_plan.api_gateway_usage_plan.id
 }
