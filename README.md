@@ -1,9 +1,21 @@
 # AWS FastAPI Lambda
 Create an API using AWS API Gateway, Lambda and FastAPI + Mangum (based on [this walkthrough](https://towardsdatascience.com/fastapi-aws-robust-api-part-1-f67ae47390f9)):
 
-* Lambda is deployed in a VPC, so has access to private resources.
-* Currently no Internet Gateway setup, so Lambda has no internet access.
-* VPC endpoints have been created for CloudWatch logging/monitoring.
+```js
+          ┌─── AWS region ────────────────────────────┐
+          │                  ┌─── VPC ──────────────┐ │
+          │                  │                      │ │
+Request  ───►  API Gateway  ───►  Lambda (FastAPI)  │ │
+          │                  │                      │ │
+          │         │        └──────────│───────────┘ │
+          │ ┌───────│───────────────────│───────────┐ │
+          │ │       ▼     CloudWatch    ▼           │ │
+          │ └───────────────────────────────────────┘ │                              
+          └───────────────────────────────────────────┘
+```
+
+* Lambda is deployed in a VPC, so the function has access to private resources.
+* No Internet Gateway, so Lambda uses VPC endpoints for access to CloudWatch.
 
 # Dev
 ```sh
@@ -26,7 +38,8 @@ terragrunt run-all plan   # to see all the goodness that will get created
 terragrunt run-all apply  # create all the goodness
 ```
 
-# Note
+# Notes
+## Root path
 The API gateway proxy integration with the Lambda function does not include a `/` root path.  If you need a root path, you'll need to add this method integration:
 ```terraform
 resource "aws_api_gateway_method" "api_gateway_root_method" {
@@ -44,4 +57,10 @@ resource "aws_api_gateway_integration" "api_proxy_integration" {
   type                    = "AWS_PROXY"
   uri                     = aws_lambda_function.api_lambda.invoke_arn
 }
+```
+## API key
+An API key is created and required by the API gateway.  You can retrieve the key from the API's usage plan in the AWS console.  To use the key:
+```sh
+curl --header "x-api-key: ${API_KEY_VALUE}" \
+  https://${API_ID}.execute-api.${API_REGION}.amazonaws.com/dev/hello
 ```
