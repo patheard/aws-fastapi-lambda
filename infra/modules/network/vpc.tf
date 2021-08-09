@@ -66,7 +66,7 @@ resource "aws_security_group_rule" "vpc_endpoints_from_lambda" {
 }
 
 resource "aws_security_group_rule" "lambda_to_vpc_endpoints" {
-  description              = "Security group rule for egress to "
+  description              = "Security group rule for egress to VPC endpoints"
   type                     = "egress"
   from_port                = 443
   to_port                  = 443
@@ -121,6 +121,21 @@ resource "aws_vpc_endpoint" "monitoring" {
   vpc_id              = aws_vpc.api_vpc.id
   vpc_endpoint_type   = "Interface"
   service_name        = "com.amazonaws.${var.region}.monitoring"
+  private_dns_enabled = true
+  security_group_ids = [
+    aws_security_group.vpc_endpoints.id,
+  ]
+  subnet_ids = aws_subnet.api_subnet.*.id
+}
+
+#
+# PrivateLink endpoint to SQS
+#
+
+resource "aws_vpc_endpoint" "sqs" {
+  vpc_id              = aws_vpc.api_vpc.id
+  vpc_endpoint_type   = "Interface"
+  service_name        = "com.amazonaws.${var.region}.sqs"
   private_dns_enabled = true
   security_group_ids = [
     aws_security_group.vpc_endpoints.id,
