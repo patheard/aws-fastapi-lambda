@@ -18,6 +18,12 @@ resource "aws_lambda_function" "api_lambda" {
     mode = "PassThrough"
   }
 
+  environment {
+    variables = {
+      message_queue_url = var.message_queue_url
+    }
+  }
+
   tags = {
     Name    = "${var.project_name}-function"
     Project = var.project_name
@@ -33,6 +39,32 @@ resource "aws_iam_role" "api_lambda_role" {
 resource "aws_iam_role_policy_attachment" "lambda_basic_execution" {
   role       = aws_iam_role.api_lambda_role.name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole"
+}
+
+resource "aws_iam_role_policy_attachment" "lambda_sqs_producer_policy_attachment" {
+  role       = aws_iam_role.api_lambda_role.name
+  policy_arn = aws_iam_policy.lambda_sqs_producer_policy.arn
+}
+
+resource "aws_iam_policy" "lambda_sqs_producer_policy" {
+  name        = "LambdaSqsProducer"
+  description = "IAM policy for creating messages in an SQS queue"
+  path        = "/"
+  policy      = data.aws_iam_policy_document.lambda_sqs_producer_policy.json
+}
+
+data "aws_iam_policy_document" "lambda_sqs_producer_policy" {
+  statement {
+    effect = "Allow"
+    actions = [
+      "sqs:GetQueueAttributes",
+      "sqs:GetQueueUrl",
+      "sqs:SendMessage*"
+    ]
+    resources = [
+      var.message_queue_arn
+    ]
+  }
 }
 
 data "aws_iam_policy_document" "lambda_assume_policy" {
