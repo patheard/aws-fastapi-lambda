@@ -20,7 +20,8 @@ resource "aws_lambda_function" "api_lambda" {
 
   environment {
     variables = {
-      message_queue_url = var.message_queue_url
+      MESSAGE_QUEUE_NAME = var.message_queue_name
+      REGION             = var.region
     }
   }
 
