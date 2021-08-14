@@ -13,7 +13,7 @@ variable "message_queue_arn" {
   type        = string
 }
 
-variable "message_queue_url" {
-  description = "URL of the SQS to send messages to"
+variable "message_queue_name" {
+  description = "Name of the SQS to send messages to"
   type        = string
 }
