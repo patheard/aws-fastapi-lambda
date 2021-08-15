@@ -19,7 +19,7 @@ def test_produce(MockDateTime, MockBoto):
     sqs = MagicMock()
     sqs.get_queue_by_name.return_value = queue
     MockBoto.resource.return_value = sqs
-    MockDateTime.now.return_value = "1970-01-01"
+    MockDateTime.now.return_value.isoformat.return_value = "1970-01-01"
 
     assert main.produce() == {"message_id": "42"}
 
@@ -30,5 +30,6 @@ def test_produce(MockDateTime, MockBoto):
     )
 
 
+@patch("main.MESSAGE_QUEUE_NAME", None)
 def test_produce_no_queue():
     assert main.produce() == {"error": "Message queue name not set"}
