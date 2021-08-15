@@ -27,6 +27,7 @@ resource "aws_api_gateway_deployment" "api_deployment" {
 }
 
 resource "aws_api_gateway_stage" "api_stage" {
+  # checkov:skip=CKV2_AWS_29:WAF not needed for non-prod use
   deployment_id = aws_api_gateway_deployment.api_deployment.id
   rest_api_id   = aws_api_gateway_rest_api.api_gateway.id
   stage_name    = "dev"
@@ -66,9 +67,7 @@ resource "aws_api_gateway_method_settings" "api_gateway_method_settings" {
   method_path = "*/*"
 
   settings {
-    caching_enabled      = true
-    cache_ttl_in_seconds = "3600" # 1 hour
-
+    caching_enabled = false
     metrics_enabled = true
     logging_level   = "ERROR"
   }
