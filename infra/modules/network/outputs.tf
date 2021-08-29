@@ -1,6 +1,6 @@
 output "lambda_subnet_ids" {
   description = "Lambda's subnet IDs"
-  value       = aws_subnet.api_subnet.*.id
+  value       = module.high_availability_vpc.private_subnet_ids
 }
 
 output "lambda_security_group_id" {

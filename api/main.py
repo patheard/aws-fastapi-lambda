@@ -4,6 +4,7 @@ Main API handler that defines all routes.
 
 import json
 import os
+import requests
 from datetime import datetime
 
 import boto3
@@ -23,6 +24,12 @@ app = FastAPI(
 def hello():
     "Hello path request"
     return {"Hello": "World"}
+
+
+@app.get("/user/{user_id}")
+def user(user_id):
+    request = requests.get(f"https://api.github.com/users/{user_id}")
+    return request.json()
 
 
 @app.get("/produce")
